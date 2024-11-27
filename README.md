@@ -1,20 +1,21 @@
-# 🚀 LangChain Vector Database Integration
+# 🚀 Chain Vectorize: Advanced LangChain Vector Database Integration
 
-## Overview
+## 📝 Overview
 
-This project is a powerful demonstration of integrating LangChain with PostgreSQL's vector database capabilities, enabling advanced semantic search and contextual AI interactions. 🤖✨
+Chain Vectorize is a cutting-edge project demonstrating seamless integration of LangChain with PostgreSQL's vector database capabilities. This solution enables advanced semantic search, contextual AI interactions, and efficient document embedding storage.
 
 ## 🌟 Key Features
 
-- **🔍 Semantic Search**: Perform advanced similarity searches on document embeddings
-- **🐘 PostgreSQL Integration**: Seamless vector storage using `pgvector`
-- **🐳 Dockerized Environment**: Easy setup and deployment
-- **🤖 AI-Powered Retrieval**: Generate contextual responses using OpenAI's language models
+- 🔍 **Semantic Search**: Perform advanced similarity searches on document embeddings
+- 🐘 **PostgreSQL Integration**: Robust vector storage using `pgvector`
+- 🐳 **Dockerized Environment**: Simplified setup and deployment
+- 🤖 **AI-Powered Retrieval**: Contextual response generation with OpenAI's language models
+- 📊 **Flexible Metadata Handling**: Store and query document metadata alongside vectors
 
-## 🏗️ Project Architecture
+## 🏗️ Project Structure
 
 ```
-📁 langchain-vector-integration/
+📁 chain-vectorize/
 │
 ├── 🐳 Dockerfile              # Container configuration
 ├── 📝 docker-compose.yml       # Multi-container Docker setup
@@ -26,29 +27,40 @@ This project is a powerful demonstration of integrating LangChain with PostgreSQ
 
 ## 🛠️ Prerequisites
 
-- 🐳 Docker and Docker Compose
+- 💻 Docker and Docker Compose
+- 🐍 Python 3.11+
 - 🔑 OpenAI API Key
-- 💻 Basic understanding of Python and vector databases
+- 🐙 GitHub Account (for contributing)
 
 ## 🚀 Quick Start Guide
 
-### 1. Clone the Repository
+### 1. Fork the Repository 🍴
+
+1. Visit the repository: https://github.com/decagondev/chain-vectorize
+2. Click the **Fork** button in the top-right corner
+3. Choose your personal GitHub account
+
+### 2. Clone Your Forked Repository 📦
 
 ```bash
-git clone https://github.com/yourusername/langchain-vector-integration.git
-cd langchain-vector-integration
+# Replace {your-username} with your GitHub username
+git clone https://github.com/{your-username}/chain-vectorize.git
+cd chain-vectorize
+
+# Add upstream remote
+git remote add upstream https://github.com/decagondev/chain-vectorize.git
 ```
 
-### 2. Configure Environment
+### 3. Set Up Environment Variables 🔧
 
-Create a `.env` file with your credentials:
+Create a `.env` file in the project root:
 
 ```env
 DATABASE_URL=postgresql://yourusername:yourpassword@postgres:5432/vectordb
 OPENAI_API_KEY=your_openai_api_key
 ```
 
-### 3. Build and Launch 🚢
+### 4. Build and Launch 🚢
 
 ```bash
 docker-compose up --build
@@ -61,24 +73,33 @@ docker-compose up --build
 ```python
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import PGVector
+import os
 
 # Initialize embeddings
 embeddings = OpenAIEmbeddings()
 
 # Create vector store
 vectorstore = PGVector(
-    connection_string=DATABASE_URL,
+    connection_string=os.getenv("DATABASE_URL"),
     embedding_function=embeddings,
-    collection_name="my_documents"
+    collection_name="document_collection"
 )
 
-# Add documents
+# Add documents with metadata
 documents = [
-    "Machine learning is revolutionizing AI",
-    "Vector databases enable semantic search"
+    "Machine learning revolutionizes artificial intelligence",
+    "Vector databases enable advanced semantic search"
 ]
 
-vectorstore.add_texts(documents)
+metadatas = [
+    {"source": "AI_research.txt", "category": "Technology"},
+    {"source": "search_tech.pdf", "category": "Database"}
+]
+
+vectorstore.add_texts(
+    texts=documents,
+    metadatas=metadatas
+)
 ```
 
 ### Performing Semantic Search
@@ -89,7 +110,8 @@ query = "Tell me about AI technologies"
 similar_docs = vectorstore.similarity_search(query, k=2)
 
 for doc in similar_docs:
-    print(doc.page_content)
+    print(f"Content: {doc.page_content}")
+    print(f"Metadata: {doc.metadata}")
 ```
 
 ## 🔬 Advanced Configurations
@@ -99,41 +121,84 @@ for doc in similar_docs:
 - Default dimension: 1536 (OpenAI's embedding size)
 - Modify in `db_setup.py` for different embedding models
 
-### Extending Metadata
-
-Enhance document tracking by adding custom metadata:
+### Metadata Filtering
 
 ```python
-vectorstore.add_texts(
-    texts=["Your document text"],
-    metadatas=[{
-        "source": "research_paper.pdf",
-        "author": "Jane Doe",
-        "timestamp": "2023-08-15"
-    }]
+# Filter documents by metadata
+filtered_docs = vectorstore.similarity_search(
+    query="AI",
+    filter={"category": "Technology"}
 )
 ```
+
+## 🤝 Contributing Workflow
+
+### Creating a Pull Request
+
+1. **Create a Feature Branch**
+```bash
+git checkout -b feature/your-feature-name
+```
+
+2. **Make Changes**
+- Implement your feature
+- Add/update tests
+- Ensure code quality
+
+3. **Commit Changes**
+```bash
+git add .
+git commit -m "Describe your changes in detail"
+```
+
+4. **Sync with Upstream**
+```bash
+git fetch upstream
+git merge upstream/main
+```
+
+5. **Push Your Branch**
+```bash
+git push origin feature/your-feature-name
+```
+
+6. **Open Pull Request**
+- Go to your fork on GitHub
+- Click "New Pull Request"
+- Provide a clear description
 
 ## 🛡️ Troubleshooting
 
 ### Common Issues
 
-- **Connection Problems** 🔌
+- **Database Connection** 🔌
   - Verify `DATABASE_URL` matches Docker Compose settings
   - Check network configurations
 
 - **pgvector Extension** 🐘
   - Ensure PostgreSQL image supports vector extension
-  - Use `ankane/pgvector:latest` recommended image
+  - Recommended: `ankane/pgvector:latest`
+
+## 🚀 Future Roadmap
+
+- [ ] Multi-model embedding support
+- [ ] Advanced filtering capabilities
+- [ ] Performance monitoring tools
+- [ ] Expanded documentation
 
 ## 📜 License
 
 MIT License - See `LICENSE` file for details.
 
-## 🤝 Contributing
+## 💌 Disclaimer
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+This project is a demonstration. Ensure compliance with OpenAI's usage policies and adapt for production environments.
 
-### 💌 Disclaimer
+## 🌐 Connect
 
-This project is a demonstration. Ensure compliance with OpenAI's usage policies and adapt the code for production environments.
+- **Project Link**: [GitHub Repository](https://github.com/decagondev/chain-vectorize)
+- **Issues**: [Project Issues](https://github.com/decagondev/chain-vectorize/issues)
+
+---
+
+**Happy Coding!** 👩‍💻👨‍💻
